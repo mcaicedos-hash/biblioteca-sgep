@@ -168,56 +168,127 @@ img { display: block; }
 /* ============ VISOR ============ */
 
 body.visor-body {
+  position: fixed;
+  inset: 0;
   background: var(--oscuro-2);
-  min-height: 100vh;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
   overflow: hidden;
+  /* Evita que el navegador robe los gestos táctiles del libro */
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.visor-superior {
+/* El libro ocupa TODA la pantalla; la librería lo ajusta
+   automáticamente al espacio disponible en cualquier dispositivo */
+.zona-libro {
+  position: absolute;
+  inset: 0;
+  padding: 64px 72px 84px;   /* aire para los controles flotantes */
   display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 18px;
-  flex: 0 0 auto;
-}
-
-.btn-volver {
-  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px; height: 42px;
-  border-radius: 50%;
-  background: var(--acento);
-  color: var(--texto-sobre-acento);
-  text-decoration: none;
-  flex: 0 0 auto;
 }
-.btn-volver svg { width: 20px; height: 20px; }
+
+#flipbook { width: 100%; height: 100%; }
+
+/* --- Controles flotantes (siempre visibles sobre la pantalla) --- */
+
+.overlay-superior {
+  position: fixed;
+  top: 12px; left: 12px; right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 30;
+  pointer-events: none;            /* solo los botones reciben toques */
+}
+.overlay-superior .btn-circulo,
+.overlay-superior .visor-titulo { pointer-events: auto; }
 
 .visor-titulo {
   color: #FFFFFF;
   font-weight: 300;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  background: rgba(25,25,25,.55);
+  border-radius: 999px;
+  padding: 8px 16px;
+  backdrop-filter: blur(4px);
 }
 
-.zona-libro {
-  flex: 1 1 auto;
+.flecha-flotante {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+  box-shadow: 0 4px 14px rgba(0,0,0,.35);
+}
+.flecha-flotante.izquierda { left: 14px; }
+.flecha-flotante.derecha  { right: 14px; }
+.flecha-flotante:hover { transform: translateY(-50%) scale(1.08); }
+
+.overlay-inferior {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 8px 40px;
-  min-height: 0;
+  gap: 12px;
+  z-index: 30;
 }
 
-#flipbook { max-width: 100%; }
+.btn-circulo {
+  width: 48px; height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: var(--acento);
+  color: var(--texto-sobre-acento);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  flex: 0 0 auto;
+  transition: transform .15s ease, opacity .15s ease;
+}
+.btn-circulo:hover { transform: scale(1.08); }
+.btn-circulo:disabled { opacity: .35; cursor: default; transform: translateY(-50%); }
+.btn-circulo:disabled:not(.flecha-flotante) { transform: none; }
+.btn-circulo svg { width: 20px; height: 20px; }
 
-/* Página individual del flipbook */
+.pill-pagina {
+  border: none;
+  cursor: pointer;
+  font-family: var(--fuente);
+  font-weight: 500;
+  font-size: 0.88rem;
+  background: var(--acento);
+  color: var(--texto-sobre-acento);
+  border-radius: 999px;
+  padding: 13px 24px;
+  min-width: 130px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,.35);
+}
+
+.pill-pagina input {
+  width: 46px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+}
+.pill-pagina input::-webkit-outer-spin-button,
+.pill-pagina input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* --- Página individual del flipbook --- */
+
 .pagina {
   background: var(--oscuro-1);
   overflow: hidden;
@@ -229,6 +300,7 @@ body.visor-body {
   object-fit: contain;
   opacity: 0;
   transition: opacity .3s ease;
+  pointer-events: none;      /* el arrastre lo maneja la librería */
 }
 
 .pagina.cargada img { opacity: 1; }
@@ -273,60 +345,26 @@ body.visor-body {
 .pagina.con-error .spinner { display: none; }
 @keyframes girar { to { transform: rotate(360deg); } }
 
-/* Barra de controles */
-.controles {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 14px 18px 22px;
+/* --- Modo inmersivo (respaldo de pantalla completa en iPhone) --- */
+body.modo-inmersivo .overlay-superior { display: none; }
+body.modo-inmersivo .zona-libro { padding-top: 16px; }
+
+/* --- Celular --- */
+@media (max-width: 700px) {
+  /* Las flechas se superponen levemente al borde de la página,
+     patrón estándar en visores móviles, para dar el máximo
+     espacio posible al libro */
+  .zona-libro { padding: 60px 14px 80px; }
+  .btn-circulo { width: 44px; height: 44px; }
+  .flecha-flotante.izquierda { left: 8px; }
+  .flecha-flotante.derecha  { right: 8px; }
+  .visor-titulo { font-size: 0.82rem; }
 }
 
-.btn-circulo {
-  width: 46px; height: 46px;
-  border: none;
-  border-radius: 50%;
-  background: var(--acento);
-  color: var(--texto-sobre-acento);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform .15s ease;
-}
-.btn-circulo:hover { transform: scale(1.08); }
-.btn-circulo:disabled { background: var(--oscuro-1); color: var(--gris-secundario); cursor: default; transform: none; }
-.btn-circulo svg { width: 20px; height: 20px; }
-
-.pill-pagina {
-  border: none;
-  cursor: pointer;
-  font-family: var(--fuente);
-  font-weight: 500;
-  font-size: 0.85rem;
-  background: var(--acento);
-  color: var(--texto-sobre-acento);
-  border-radius: 999px;
-  padding: 11px 22px;
-  min-width: 128px;
-  text-align: center;
-}
-
-.pill-pagina input {
-  width: 44px;
-  border: none;
-  outline: none;
-  background: transparent;
-  font: inherit;
-  color: inherit;
-  text-align: center;
-}
-.pill-pagina input::-webkit-outer-spin-button,
-.pill-pagina input::-webkit-inner-spin-button { -webkit-appearance: none; }
-
-@media (max-width: 640px) {
-  .zona-libro { padding: 4px 12px; }
-  .visor-titulo { font-size: 0.85rem; }
-  .controles { gap: 12px; }
+/* Pantallas muy bajas (celular horizontal): controles más compactos */
+@media (max-height: 480px) {
+  .zona-libro { padding: 14px 66px 14px; }
+  .overlay-inferior { bottom: 8px; }
+  .overlay-superior { top: 8px; }
+  .visor-titulo { display: none; }
 }
