@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visor — Biblioteca de Manuales</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@200;300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css">
+
+  <!-- ANALÍTICA (opcional): mismo código GoatCounter del index.html.
+       Reemplaza TU-CODIGO o borra esta línea si no la usas. -->
+  <script data-goatcounter="https://TU-CODIGO.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+</head>
+<body class="visor-body">
+
+  <div class="visor-superior">
+    <a class="btn-volver" href="index.html" title="Volver a la biblioteca" aria-label="Volver a la biblioteca">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    </a>
+    <span class="visor-titulo" id="tituloLibro">Cargando…</span>
+  </div>
+
+  <div class="zona-libro">
+    <div id="flipbook"></div>
+  </div>
+
+  <div class="controles">
+    <button class="btn-circulo" id="btnAnterior" title="Página anterior" aria-label="Página anterior">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+
+    <button class="pill-pagina" id="pillPagina" title="Clic para ir a una página específica">Pág. – de –</button>
+
+    <button class="btn-circulo" id="btnSiguiente" title="Página siguiente" aria-label="Página siguiente">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+
+    <button class="btn-circulo" id="btnPantalla" title="Pantalla completa" aria-label="Pantalla completa">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+    </button>
+  </div>
+
+  <script src="libs/page-flip.browser.js"></script>
+  <script src="js/visor.js"></script>
+</body>
+</html>

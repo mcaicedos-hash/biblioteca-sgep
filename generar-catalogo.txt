@@ -1,0 +1,62 @@
+/* ==========================================================
+   GENERADOR DE CATÁLOGO DE LIBRO — Google Apps Script
+   ==========================================================
+   ¿Para qué sirve?
+   Cuando agregues un libro nuevo a la biblioteca, este script
+   lee tu carpeta de Google Drive y te entrega el JSON del libro
+   ya armado, con todos los IDs en orden. Sin copiar nada a mano.
+
+   ¿Cómo se usa? (5 minutos)
+   1. Entra a https://script.google.com con tu cuenta de Google
+      (la misma donde están las carpetas de Drive).
+   2. Clic en "Nuevo proyecto".
+   3. Borra todo el código que aparece y pega ESTE archivo completo.
+   4. Edita las 3 líneas de CONFIGURACIÓN aquí abajo.
+   5. Clic en el botón "Ejecutar" (▶). La primera vez Google te
+      pedirá autorizar el acceso a tu propio Drive: acepta.
+   6. Abre el menú "Registro de ejecución" (abajo): ahí aparece
+      el JSON completo. Cópialo y guárdalo como un archivo nuevo
+      en la carpeta data/ de tu repositorio.
+   ========================================================== */
+
+function generarCatalogo() {
+
+  // ------------------- CONFIGURACIÓN -------------------
+  // ID de la carpeta de Drive: es el texto largo al final de la URL
+  // de la carpeta. Ejemplo, en:
+  // https://drive.google.com/drive/folders/12C0TF1SG39hXEwv2JIdZsX66bO71CrgO
+  // el ID es: 12C0TF1SG39hXEwv2JIdZsX66bO71CrgO
+  var ID_CARPETA = "PEGA_AQUI_EL_ID_DE_LA_CARPETA";
+
+  var ID_LIBRO = "mi-libro-nuevo";      // en minúsculas, sin espacios ni tildes
+  var TITULO   = "Título del manual";
+  // ------------------------------------------------------
+
+  var carpeta = DriveApp.getFolderById(ID_CARPETA);
+  var archivos = carpeta.getFiles();
+  var lista = [];
+
+  while (archivos.hasNext()) {
+    var f = archivos.next();
+    lista.push({ nombre: f.getName(), id: f.getId() });
+  }
+
+  // Ordena por nombre de archivo (pag01, pag02... quedan en orden)
+  lista.sort(function (a, b) {
+    return a.nombre.localeCompare(b.nombre, undefined, { numeric: true });
+  });
+
+  var catalogo = {
+    id: ID_LIBRO,
+    titulo: TITULO,
+    proporcion: { ancho: 2550, alto: 3300 },
+    paginas: lista.map(function (x) { return x.id; })
+  };
+
+  Logger.log("Archivos encontrados (verifica el orden):");
+  lista.forEach(function (x, i) {
+    Logger.log((i + 1) + ". " + x.nombre);
+  });
+  Logger.log("\n===== COPIA DESDE AQUÍ =====\n");
+  Logger.log(JSON.stringify(catalogo, null, 2));
+}

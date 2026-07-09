@@ -1,0 +1,19 @@
+{
+  "biblioteca": "Biblioteca de Manuales — SGEP",
+  "libros": [
+    {
+      "id": "ficha-proyectos",
+      "titulo": "Ficha de Proyectos",
+      "descripcion": "Manual para el diligenciamiento de fichas de proyecto",
+      "categoria": "Manual",
+      "archivo": "data/ficha-proyectos.json"
+    },
+    {
+      "id": "pagos",
+      "titulo": "Pagos",
+      "descripcion": "Manual del proceso de pagos",
+      "categoria": "Manual",
+      "archivo": "data/pagos.json"
+    }
+  ]
+}

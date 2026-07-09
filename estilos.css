@@ -1,0 +1,332 @@
+/* ============================================================
+   BIBLIOTECA DE MANUALES — SGEP · Kit de marca RenoBo (web)
+   Para cambiar el color de acento del sitio completo,
+   edita SOLO la variable --acento y --texto-sobre-acento.
+   ============================================================ */
+
+:root {
+  /* Acento (Verde Renovación por defecto) */
+  --acento: #AFE951;
+  /* Sobre acentos claros: #434343 · sobre acentos oscuros: #FFFFFF */
+  --texto-sobre-acento: #434343;
+
+  /* Paleta extendida (referencia para cambio futuro de acento)
+     Naranja #F4AD39 · Violeta #594EEA · Azul Marino #69CED1
+     Rojo Pastel #FE525E · Rosado #FFBFBD · Verde Medio #255B46
+     Verde Oscuro #163738 · Alto Contraste #333333
+     Gris Claro #CCCCCC · Verde Vivo #DDFF86 */
+
+  /* Grises de soporte (fijos) */
+  --gris-texto: #434343;
+  --gris-secundario: #666666;
+  --gris-tarjeta: #F3F3F3;
+  --gris-fondo: #EFEFEF;
+  --oscuro-1: #2A2A2A;
+  --oscuro-2: #191919;
+
+  --radio-tarjeta: 18px;
+  --fuente: "IBM Plex Sans", Arial, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  font-family: var(--fuente);
+  color: var(--gris-texto);
+  background: var(--gris-fondo);
+}
+
+img { display: block; }
+
+/* ============ HOME · LIBRERO ============ */
+
+.encabezado {
+  background: #FFFFFF;
+  padding: 56px 24px 48px;
+  text-align: center;
+}
+
+.encabezado .etiqueta {
+  display: inline-block;
+  font-weight: 500;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--acento);
+  color: var(--texto-sobre-acento);
+  border-radius: 999px;
+  padding: 6px 16px;
+  margin-bottom: 18px;
+}
+
+.encabezado h1 {
+  font-weight: 500;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  letter-spacing: -0.01em;
+}
+
+.encabezado p {
+  font-weight: 300;
+  color: var(--gris-secundario);
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
+.librero {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 56px 24px 96px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 36px;
+}
+
+.tarjeta {
+  background: #FFFFFF;
+  border-radius: var(--radio-tarjeta);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  transition: transform .25s ease, box-shadow .25s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+
+.tarjeta:hover,
+.tarjeta:focus-visible {
+  transform: translateY(-6px);
+  box-shadow: 0 14px 30px rgba(0,0,0,.10);
+}
+
+.tarjeta:focus-visible { outline: 3px solid var(--acento); outline-offset: 3px; }
+
+/* Portada con efecto sutil de "canto de libro" (páginas apiladas) */
+.tarjeta .portada {
+  background: var(--gris-tarjeta);
+  padding: 26px 26px 0;
+}
+
+.tarjeta .portada .libro3d {
+  position: relative;
+  aspect-ratio: 2550 / 3300;
+  border-radius: 4px 10px 10px 4px;
+  box-shadow:
+    2px 0 0 #FFFFFF, 3px 1px 0 #DDDDDD,
+    5px 0 0 #FFFFFF, 6px 2px 0 #D6D6D6,
+    0 10px 22px rgba(0,0,0,.16);
+  overflow: hidden;
+}
+
+.tarjeta .portada img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #FFFFFF;
+}
+
+.tarjeta .info { padding: 20px 26px 26px; }
+
+.tarjeta .pill-categoria {
+  display: inline-block;
+  font-weight: 500;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--acento);
+  color: var(--texto-sobre-acento);
+  border-radius: 999px;
+  padding: 4px 12px;
+  margin-bottom: 12px;
+}
+
+.tarjeta h2 { font-weight: 500; font-size: 1.12rem; }
+
+.tarjeta .descripcion {
+  font-weight: 300;
+  color: var(--gris-secundario);
+  font-size: 0.9rem;
+  margin-top: 6px;
+  line-height: 1.45;
+}
+
+.tarjeta .paginas-num {
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: var(--gris-secundario);
+  margin-top: 14px;
+}
+
+.aviso-error {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-weight: 300;
+  color: var(--gris-secundario);
+  padding: 40px 0;
+}
+
+/* ============ VISOR ============ */
+
+body.visor-body {
+  background: var(--oscuro-2);
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.visor-superior {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  flex: 0 0 auto;
+}
+
+.btn-volver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--acento);
+  color: var(--texto-sobre-acento);
+  text-decoration: none;
+  flex: 0 0 auto;
+}
+.btn-volver svg { width: 20px; height: 20px; }
+
+.visor-titulo {
+  color: #FFFFFF;
+  font-weight: 300;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zona-libro {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 40px;
+  min-height: 0;
+}
+
+#flipbook { max-width: 100%; }
+
+/* Página individual del flipbook */
+.pagina {
+  background: var(--oscuro-1);
+  overflow: hidden;
+}
+
+.pagina img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
+.pagina.cargada img { opacity: 1; }
+
+.pagina .marcador {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: var(--gris-secundario);
+  font-weight: 300;
+  font-size: 0.85rem;
+}
+
+.pagina.cargada .marcador { display: none; }
+
+.pagina .marcador .btn-reintentar {
+  display: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--fuente);
+  font-weight: 500;
+  font-size: 0.8rem;
+  background: var(--acento);
+  color: var(--texto-sobre-acento);
+  border-radius: 999px;
+  padding: 8px 20px;
+}
+
+.pagina.con-error .marcador .btn-reintentar { display: inline-block; }
+
+.spinner {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,.15);
+  border-top-color: var(--acento);
+  animation: girar 0.9s linear infinite;
+}
+.pagina.con-error .spinner { display: none; }
+@keyframes girar { to { transform: rotate(360deg); } }
+
+/* Barra de controles */
+.controles {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 14px 18px 22px;
+}
+
+.btn-circulo {
+  width: 46px; height: 46px;
+  border: none;
+  border-radius: 50%;
+  background: var(--acento);
+  color: var(--texto-sobre-acento);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .15s ease;
+}
+.btn-circulo:hover { transform: scale(1.08); }
+.btn-circulo:disabled { background: var(--oscuro-1); color: var(--gris-secundario); cursor: default; transform: none; }
+.btn-circulo svg { width: 20px; height: 20px; }
+
+.pill-pagina {
+  border: none;
+  cursor: pointer;
+  font-family: var(--fuente);
+  font-weight: 500;
+  font-size: 0.85rem;
+  background: var(--acento);
+  color: var(--texto-sobre-acento);
+  border-radius: 999px;
+  padding: 11px 22px;
+  min-width: 128px;
+  text-align: center;
+}
+
+.pill-pagina input {
+  width: 44px;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+}
+.pill-pagina input::-webkit-outer-spin-button,
+.pill-pagina input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+@media (max-width: 640px) {
+  .zona-libro { padding: 4px 12px; }
+  .visor-titulo { font-size: 0.85rem; }
+  .controles { gap: 12px; }
+}
