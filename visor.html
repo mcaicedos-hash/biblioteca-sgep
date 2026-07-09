@@ -28,7 +28,7 @@
     <span class="visor-titulo" id="tituloLibro">Cargando…</span>
   </div>
 
-  <!-- Flechas flotantes, siempre visibles sobre la pantalla -->
+  <!-- Flechas flotantes, siempre visibles -->
   <button class="btn-circulo flecha-flotante izquierda" id="btnAnterior" title="Página anterior" aria-label="Página anterior">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
   </button>
@@ -36,12 +36,38 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
   </button>
 
-  <!-- Barra inferior flotante: indicador de página + pantalla completa -->
+  <!-- Barra inferior flotante: página + lupa + pantalla completa -->
   <div class="overlay-inferior">
     <button class="pill-pagina" id="pillPagina" title="Toca para ir a una página específica">Pág. – de –</button>
+    <button class="btn-circulo" id="btnLupa" title="Zoom de lectura" aria-label="Zoom de lectura">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+    </button>
     <button class="btn-circulo" id="btnPantalla" title="Pantalla completa" aria-label="Pantalla completa">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M16 3h3a2 2 0 0 1 2 2v3"/><path d="M8 21H5a2 2 0 0 1-2-2v-3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
     </button>
+  </div>
+
+  <!-- ===== CAPA DE ZOOM DE LECTURA =====
+       Se abre con doble toque sobre la página o con el botón de lupa.
+       Pellizca / rueda del mouse para acercar; arrastra para moverte. -->
+  <div class="capa-zoom oculta" id="capaZoom">
+    <img id="imgZoom" alt="Página ampliada" draggable="false">
+
+    <button class="btn-circulo zoom-cerrar" id="btnCerrarZoom" title="Cerrar zoom" aria-label="Cerrar zoom">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+    </button>
+
+    <button class="btn-circulo zoom-flecha izquierda" id="btnZoomAnterior" title="Página anterior" aria-label="Página anterior">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="btn-circulo zoom-flecha derecha" id="btnZoomSiguiente" title="Página siguiente" aria-label="Página siguiente">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+
+    <div class="zoom-pie">
+      <span class="pill-pagina" id="pillZoom">Pág. –</span>
+      <span class="zoom-ayuda" id="ayudaZoom">Pellizca o usa la rueda para acercar · doble toque para alternar</span>
+    </div>
   </div>
 
   <script src="libs/page-flip.browser.js"></script>
