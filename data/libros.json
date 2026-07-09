@@ -3,16 +3,16 @@
   "libros": [
     {
       "id": "ficha-proyectos",
-      "titulo": "Ficha de Proyectos",
-      "descripcion": "Manual para el diligenciamiento de fichas de proyecto",
-      "categoria": "Manual",
+      "titulo": "Guía Ficha de Seguimiento a Proyectos",
+      "descripcion": "Directrices generales para el diligenciamiento de la Ficha de Proyectos, la consigna de archivos y su relación en el Ambiente Común de Datos (CDE).",
+      "categoria": "Cartilla Práctica",
       "archivo": "data/ficha-proyectos.json"
     },
     {
       "id": "pagos",
-      "titulo": "Pagos",
-      "descripcion": "Manual del proceso de pagos",
-      "categoria": "Manual",
+      "titulo": "Criterios de revisión técnica y administrativa para la aprobación de pagos en proyectos",
+      "descripcion": "Lineamientos relacionados con los soportes documentales que deben ser cargados tanto en el Sistema Electrónico para la Contratación Pública (SECOP) como en el Sistema de Gestión Documental de RenoBo",
+      "categoria": "Cartilla Práctica",
       "archivo": "data/pagos.json"
     }
   ]
