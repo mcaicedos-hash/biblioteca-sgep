@@ -1,8 +1,14 @@
-/* VISOR · Lee el JSON del libro indicado en la URL (?libro=id),
-   construye el flipbook con StPageFlip y gestiona:
+/* VISOR · Lee el JSON del libro indicado en la URL (?libro=id).
+   El libro ocupa toda la pantalla y se auto-ajusta a cualquier
+   tamaño (celular, tablet, PC, pantalla completa). Los controles
+   flotan encima y están siempre visibles.
+
+   Incluye:
    - Carga progresiva (solo las páginas cercanas a la actual)
    - Reintento automático si Drive falla, y botón "Reintentar"
-   - Navegación, salto a página, pantalla completa y teclado */
+   - Pasar página con: swipe/arrastre táctil, arrastre de esquina
+     con mouse, clic/tap en los bordes, flechas flotantes y teclado
+   - Pantalla completa real, con modo alternativo para iPhone */
 
 const URL_PAGINA = (driveId) =>
   `https://drive.google.com/thumbnail?id=${driveId}&sz=w1600`;
@@ -51,17 +57,18 @@ function construirFlipbook(libro) {
   const contenedor = document.getElementById("flipbook");
   const total = libro.paginas.length;
 
-  // Creamos un div por página, con la imagen SIN src todavía
-  // (el src se asigna solo cuando la página está cerca de la vista actual).
+  // Un div por página. La imagen empieza SIN src: se asigna solo
+  // cuando la página está cerca de la vista actual (carga progresiva).
   libro.paginas.forEach((driveId, i) => {
     const pagina = document.createElement("div");
     pagina.className = "pagina";
-    // Portada y contraportada como tapas "duras" (giran planas, como revista)
+    // Portada y contraportada como tapas duras (van solas, giran planas)
     pagina.dataset.density = i === 0 || i === total - 1 ? "hard" : "soft";
 
     const img = document.createElement("img");
     img.dataset.src = URL_PAGINA(driveId);
     img.alt = `Página ${i + 1}`;
+    img.draggable = false;
 
     const marcador = document.createElement("div");
     marcador.className = "marcador";
@@ -71,6 +78,7 @@ function construirFlipbook(libro) {
     btn.className = "btn-reintentar";
     btn.textContent = "Reintentar";
     btn.addEventListener("pointerdown", (e) => e.stopPropagation());
+    btn.addEventListener("touchstart", (e) => e.stopPropagation());
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
       pagina.classList.remove("con-error");
@@ -92,25 +100,37 @@ function construirFlipbook(libro) {
   pageFlip = new St.PageFlip(contenedor, {
     width: anchoBase,
     height: altoBase,
-    size: "stretch",          // se adapta al espacio disponible
-    minWidth: 240,
-    maxWidth: 820,
-    minHeight: 300,
-    maxHeight: 1080,
+    size: "stretch",          // se estira para llenar el espacio disponible
+    minWidth: 300,            // por debajo de ~600px de ancho pasa a 1 página
+    maxWidth: 1100,
+    minHeight: 320,
+    maxHeight: 1500,
+    usePortrait: true,        // en celular vertical: una página a la vez
     showCover: true,          // portada y contraportada van solas
-    maxShadowOpacity: 0.45,   // sombra del pliegue al pasar página
+    maxShadowOpacity: 0.45,
+    swipeDistance: 12,        // swipe táctil más sensible
     mobileScrollSupport: false,
   });
 
   pageFlip.loadFromHTML(document.querySelectorAll(".pagina"));
 
-  // Carga inicial: portada y primeras páginas
+  // Carga inicial y estado de controles
   cargarVentana(0);
   actualizarControles(0, total);
 
   pageFlip.on("flip", (e) => {
     cargarVentana(e.data);
     actualizarControles(e.data, total);
+  });
+
+  // Al girar el celular o entrar/salir de pantalla completa,
+  // la librería ya se re-ajusta sola con el evento resize del navegador.
+  // Solo refrescamos el estado de los botones por si cambió la orientación.
+  window.addEventListener("resize", () => {
+    setTimeout(
+      () => actualizarControles(pageFlip.getCurrentPageIndex(), total),
+      300
+    );
   });
 
   conectarControles(total);
@@ -181,34 +201,51 @@ function conectarControles(total) {
     if (e.key === "ArrowRight") pageFlip.flipNext();
   });
 
-  // Pantalla completa
-  btnPantalla.addEventListener("click", () => {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    } else {
-      document.documentElement.requestFullscreen().catch(() => {});
+  // Pantalla completa con respaldo para iPhone (Safari en iPhone
+  // no permite pantalla completa real: usamos un modo inmersivo
+  // que oculta la barra superior del visor).
+  btnPantalla.addEventListener("click", async () => {
+    const doc = document;
+    const raiz = doc.documentElement;
+    const activa = doc.fullscreenElement || doc.webkitFullscreenElement;
+
+    if (activa) {
+      (doc.exitFullscreen || doc.webkitExitFullscreen).call(doc);
+      return;
     }
+
+    const pedir = raiz.requestFullscreen || raiz.webkitRequestFullscreen;
+    if (pedir) {
+      try {
+        await pedir.call(raiz);
+        return;
+      } catch (e) { /* sigue al modo alternativo */ }
+    }
+    document.body.classList.toggle("modo-inmersivo");
   });
 
-  // Ir a una página específica: clic en el pill → escribir número → Enter
+  // Ir a una página específica: tocar el pill → escribir número → Enter
   pill.addEventListener("click", () => {
     if (pill.querySelector("input")) return;
     const actual = pageFlip.getCurrentPageIndex() + 1;
-    pill.innerHTML = `Ir a pág. <input type="number" min="1" max="${total}" value="${actual}">`;
+    pill.innerHTML = `Ir a pág. <input type="number" inputmode="numeric" min="1" max="${total}" value="${actual}">`;
     const input = pill.querySelector("input");
     input.focus();
     input.select();
 
-    const cerrar = () =>
-      actualizarControlesSeguras(total);
+    const cerrar = () => {
+      const idx = pageFlip.getCurrentPageIndex();
+      pill.innerHTML = "";
+      pill.textContent = `Pág. ${idx + 1} de ${total}`;
+    };
 
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         const n = parseInt(input.value, 10);
         if (n >= 1 && n <= total) {
-          // Aseguramos que la página destino esté cargada antes de saltar
-          cargarVentana(n - 1);
-          pageFlip.flip(n - 1);
+          cargarVentana(n - 1);           // asegura que la página esté cargada
+          pageFlip.turnToPage(n - 1);     // salto directo, sin animar todo el camino
+          actualizarControles(n - 1, total);
         }
         cerrar();
       }
@@ -216,13 +253,6 @@ function conectarControles(total) {
     });
     input.addEventListener("blur", () => setTimeout(cerrar, 150));
   });
-
-  function actualizarControlesSeguras(t) {
-    const idx = pageFlip.getCurrentPageIndex();
-    const p = document.getElementById("pillPagina");
-    p.innerHTML = "";
-    p.textContent = `Pág. ${idx + 1} de ${t}`;
-  }
 }
 
 iniciarVisor();
