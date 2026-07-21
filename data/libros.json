@@ -5,7 +5,7 @@
       "id": "ficha-proyectos",
       "titulo": "Guía Ficha de Seguimiento a Proyectos",
       "descripcion": "Directrices generales para el diligenciamiento de la Ficha de Proyectos, la consigna de archivos y su relación en el Ambiente Común de Datos (CDE).",
-      "categoria": "Cartilla Práctica",
+      "categoria": "Guía de Usuario",
       "archivo": "data/ficha-proyectos.json"
     },
     {
